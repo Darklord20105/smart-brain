@@ -23,7 +23,8 @@ class SignUp extends Component {
   };
 
   onSubmitSignUp = e => {
-    fetch("http://localhost:3000/signup", {
+    e.preventDefault();
+    fetch("https://safe-beyond-46421.herokuapp.com/signup", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

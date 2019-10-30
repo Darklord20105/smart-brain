@@ -38,7 +38,7 @@ class DashBoard extends Component {
     e.preventDefault();
     this.setState({ imgUrl: this.state.input });
     console.log("click");
-    fetch("http://localhost:3000/imageurl", {
+    fetch("https://safe-beyond-46421.herokuapp.com/imageurl", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -49,7 +49,7 @@ class DashBoard extends Component {
       .then(response => {
         console.log(response);
         if (response) {
-          fetch("http://localhost:3000/image", {
+          fetch("https://safe-beyond-46421.herokuapp.com/image", {
             method: "put",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -77,9 +77,10 @@ class DashBoard extends Component {
         <section className="sign-in">
           <div className="signin-content">
             <div className="signin-form">
-              <h2 className="form-title">
-                Choose Image {`${name} and ${entries}`}
-              </h2>
+              <h4 className="form-title">
+                {`${name}, your entry count is : `} <span>{`${entries}`}</span>
+              </h4>
+              <h2 className="form-title">Choose Image</h2>
               <form onSubmit={this.onPictureSubmit}>
                 <div className="form-group">
                   <label htmlFor="add_picture">
