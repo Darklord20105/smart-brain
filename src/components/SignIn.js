@@ -2,85 +2,114 @@ import React, { Component } from "react";
 import { Container } from "react-bootstrap";
 
 class SignIn extends Component {
+  constructor() {
+    super();
+    this.state = {
+      email: "",
+      password: ""
+    };
+  }
+  onEmailChange = e => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
+
+  onPasswordChange = e => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
+  onSubmitSignIn = e => {
+    fetch("http://localhost:3000/signin", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: this.state.email,
+        password: this.state.password
+      })
+    })
+      .then(response => response.json())
+      .then(user => {
+        if (user.id) {
+          this.props.loadUser(user)
+          this.props.onRouteChange("home");
+        }
+      });
+  };
+
   render() {
     return (
       <Container>
-        <section class="sign-in">
-          <div class="signin-content">
-            <div class="signin-image">
+        <section className="sign-in">
+          <div className="signin-content">
+            <div className="signin-image">
               <figure>
                 <img src="images/signin-image.jpg" alt="sing up" />
               </figure>
-              <a href="#" class="signup-image-link">
+              <p
+                href="#"
+                onClick={() => this.props.onRouteChange("signup")}
+                className="signup-image-link"
+              >
                 Create an account
-              </a>
+              </p>
             </div>
 
-            <div class="signin-form">
-              <h2 class="form-title">Sign In</h2>
-              <form method="POST" class="register-form" id="login-form">
-                <div class="form-group">
-                  <label for="your_name">
-                    <i class="zmdi zmdi-account material-icons-name"></i>
+            <div className="signin-form">
+              <h2 className="form-title">Sign In</h2>
+              <div
+                className="register-form"
+                onSubmit={this.onSubmitSignIn}
+                id="login-form"
+              >
+                <div className="form-group">
+                  <label htmlFor="your_email">
+                    <i className="zmdi zmdi-account material-icons-name"></i>
                   </label>
                   <input
-                    type="text"
-                    name="your_name"
-                    id="your_name"
-                    placeholder="Your Name"
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="Your E-mail"
+                    onChange={this.onEmailChange}
                   />
                 </div>
-                <div class="form-group">
-                  <label for="your_pass">
-                    <i class="zmdi zmdi-lock"></i>
+                <div className="form-group">
+                  <label htmlFor="your_pass">
+                    <i className="zmdi zmdi-lock"></i>
                   </label>
                   <input
                     type="password"
-                    name="your_pass"
-                    id="your_pass"
+                    name="password"
+                    id="password"
                     placeholder="Password"
+                    onChange={this.onPasswordChange}
                   />
                 </div>
-                <div class="form-group">
-                  <input
-                    type="checkbox"
-                    name="remember-me"
-                    id="remember-me"
-                    class="agree-term"
-                  />
-                  <label for="remember-me" class="label-agree-term">
-                    <span>
-                      <span></span>
-                    </span>
-                    Remember me
-                  </label>
-                </div>
-                <div class="form-group form-button">
+                <div className="form-group form-button">
                   <input
                     type="submit"
                     name="signin"
                     id="signin"
-                    class="form-submit"
+                    className="form-submit"
                     value="Log in"
+                    onClick={this.onSubmitSignIn}
                   />
                 </div>
-              </form>
-              <div class="social-login">
-                <span class="social-label">Or login with</span>
-                <ul class="socials">
+              </div>
+              <div className="social-login">
+                <span className="social-label">Or login with</span>
+                <ul className="socials">
                   <li>
-                    <a href="#">
-                      <i class="display-flex-center zmdi zmdi-facebook"></i>
+                    <a href="http://www.facebook.com">
+                      <i className="display-flex-center zmdi zmdi-facebook"></i>
                     </a>
                   </li>
                   <li>
-                    <a href="#">
-                      <i class="display-flex-center zmdi zmdi-twitter"></i>
+                    <a href="http://www.twitter.com">
+                      <i className="display-flex-center zmdi zmdi-twitter"></i>
                     </a>
                   </li>
                   <li>
-                    <a href="#">
-                      <i class="display-flex-center zmdi zmdi-google"></i>
+                    <a href="http://www.google.com">
+                      <i className="display-flex-center zmdi zmdi-google"></i>
                     </a>
                   </li>
                 </ul>

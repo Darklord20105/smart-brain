@@ -1,14 +1,9 @@
 import React, { Component } from "react";
 import { Container } from "react-bootstrap";
 import { ReactComponent as AddPhoto } from "./add_photo.svg";
-import Clarifai from "clarifai";
 import "./DashBoard.css";
 
 // https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg
-
-const app = new Clarifai.App({
-  apiKey: "bb9926062f474e18a4d87aef278a01af"
-});
 
 class DashBoard extends Component {
   state = {
@@ -32,7 +27,6 @@ class DashBoard extends Component {
   };
 
   displayFaceBox = box => {
-    console.log(box);
     this.setState({ box: box });
   };
 
@@ -43,12 +37,33 @@ class DashBoard extends Component {
   onPictureSubmit = e => {
     e.preventDefault();
     this.setState({ imgUrl: this.state.input });
-
     console.log("click");
-    app.models
-      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+    fetch("http://localhost:3000/imageurl", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
+      .then(response => response.json())
       .then(response => {
         console.log(response);
+        if (response) {
+          fetch("http://localhost:3000/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: this.props.user.id
+            })
+          })
+            .then(response => {
+              response.json().then(count => {
+                console.log(count);
+                this.props.updateEntries(count);
+              });
+            })
+            .catch(console.log);
+        }
         this.displayFaceBox(this.calculateFaceLocation(response));
       })
       .catch(err => console.log(err));
@@ -56,16 +71,19 @@ class DashBoard extends Component {
 
   render() {
     const { box } = this.state;
+    const { name, entries } = this.props.user;
     return (
       <Container>
-        <section class="sign-in">
-          <div class="signin-content">
-            <div class="signin-form">
-              <h2 class="form-title">Choose Image</h2>
+        <section className="sign-in">
+          <div className="signin-content">
+            <div className="signin-form">
+              <h2 className="form-title">
+                Choose Image {`${name} and ${entries}`}
+              </h2>
               <form onSubmit={this.onPictureSubmit}>
-                <div class="form-group">
-                  <label for="add_picture">
-                    {/* <i class="zmdi zmdi-account material-icons-name"></i> */}
+                <div className="form-group">
+                  <label htmlFor="add_picture">
+                    {/* <i className="zmdi zmdi-account material-icons-name"></i> */}
                     <AddPhoto />
                   </label>
                   <input
@@ -76,19 +94,19 @@ class DashBoard extends Component {
                     onChange={this.onInputChange}
                   />
                 </div>
-                <div class="form-group form-button">
+                <div className="form-group form-button">
                   <input
                     type="submit"
                     name="submit"
                     id="submit"
-                    class="form-submit"
+                    className="form-submit"
                     value="Detect"
                   />
                 </div>
               </form>
             </div>
             {/* //image face detect */}
-            <div class="signup-image">
+            <div className="signup-image">
               <div>
                 <figure style={{ position: "relative" }}>
                   <div style={{ position: "absolute" }}>
@@ -119,3 +137,17 @@ class DashBoard extends Component {
   }
 }
 export default DashBoard;
+
+// if (response) {
+//   fetch("http://localhost:3000/image", {
+//     method: "put",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       id: this.state.user.id
+//     })
+//   })
+//     .then(response => response.json())
+//     .then(count => {
+//       this.setState(Object.assign(this.state.user, { entries: count }));
+//     })
+// }
